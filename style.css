@@ -1,0 +1,27 @@
+#playerBoard {
+    display:grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    padding: 5px;
+}
+
+#playerBoard div {
+    margin: 1px;
+    border: 1px solid black;
+}
+#playerBoard div:hover{
+    background-color: green;
+    margin: 1px;
+}
+
+#computerBoard {
+    display:grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    padding: 5px;
+}
+
+#computerBoard div {
+    margin: 1px;
+    border: 1px solid black;
+}

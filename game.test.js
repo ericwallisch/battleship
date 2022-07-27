@@ -7,9 +7,9 @@ test('create ship', () => {
 
 test('hit ship', () => {
     const battleship = new Ship('Battleship');
-    battleship.hitShip(0);
-    battleship.hitShip(1);
-    expect(battleship.hit).toEqual(['X','X',,])
+    battleship.hitShip();
+    battleship.hitShip();
+    expect(battleship.hit).toEqual(2)
 })
 
 test('see if ship is sunk - it is not', () => {
@@ -28,13 +28,15 @@ test('see if ship is sunk - it is', () => {
     expect(battleship.isSunk()).toBe(true);
 })
 
-test('gameboard init creates gameboard array', () => {
-    const gameboard = new Gameboard();
-    expect(gameboard.board).toEqual(new Array(10).fill(new Array(10).fill(0)))
-})
+// test('gameboard init creates gameboard array', () => {
+//     const gameboard = new Gameboard();
+//     expect(gameboard.board).toEqual(new Array(10).fill(new Array(10).fill(0)))
+// })
 
-test('place ship in gameboard', () => {
-    const gameboard = new Gameboard();
-    gameboard.placeShip('Battleship', [0,0], 'vertical')
-    expect(gameboard.board).toEqual(new Array(10).fill(new Array(10).fill(0)))
-})
+// test('place ship in gameboard', () => {
+//     const gameboard = new Gameboard();
+//     gameboard.placeShip('Battleship', [0,0], 'vertical')
+//     expect(gameboard.board).toEqual(
+//         [,,,,,,,,,,]
+//     )
+// })
