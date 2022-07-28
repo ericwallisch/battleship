@@ -1,4 +1,4 @@
-import { Gameboard, Ship , Player, startGame, updateDOMBoard} from "./game.js";
+import { Gameboard, Ship , Player, startGame, syncBoard} from "./game.js";
 // const gameboard = new Gameboard();
 // gameboard.placeShip('Carrier', [0,0], 'horizontal')
 // gameboard.placeShip('Battleship', [5,5], 'vertical')
@@ -11,6 +11,6 @@ import { Gameboard, Ship , Player, startGame, updateDOMBoard} from "./game.js";
 // console.log(gameboard.ships)
 
 let players = startGame("Human", "Computer");
-updateDOMBoard(players);
-players[0].board.placeShip('Carrier', [0,0], 'horizontal')
-players[1].board.placeShip('Battleship', [5,5], 'vertical')
+//players[0].board.placeShip('Carrier', 0, 'horizontal')
+//players[1].board.placeShip('Battleship', 15, 'vertical')
+//syncBoard(players)

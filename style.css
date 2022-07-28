@@ -1,4 +1,18 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    height: 75vh;
+    width: 100vw;
+}
+
+h1 {
+    align-self: center;
+    justify-self: center;
+    padding: 20px;
+}
+
 #playerBoard {
+    justify-self: center;
     display:grid;
     grid-template-columns: repeat(10, 40px);
     grid-template-rows: repeat(10, 40px);
@@ -9,12 +23,27 @@
     margin: 1px;
     border: 1px solid black;
 }
+
+.ship{
+    margin: 1px;
+    border: 1px solid black;
+    background-color: red;
+}
+
+.missed {
+    background-color: blue;
+}
+
+.hit {
+    background-color: orange;
+}
+
 #playerBoard div:hover{
     background-color: green;
-    margin: 1px;
 }
 
 #computerBoard {
+    justify-self: center;
     display:grid;
     grid-template-columns: repeat(10, 40px);
     grid-template-rows: repeat(10, 40px);
@@ -24,4 +53,8 @@
 #computerBoard div {
     margin: 1px;
     border: 1px solid black;
+}
+
+#computerBoard div:hover {  
+    background-color: aquamarine;
 }
