@@ -33,26 +33,12 @@ export class Ship {
 
 export class Gameboard {
     constructor() {
-        // this.board = [
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        //     new Array(10),
-        // ]
         this.board = new Array(100);
         this.ships = []
+        this.totalHits = 0;
     }
 
     changeBoard(index, marker) {
-        // let row = index[0];
-        // let col = index[1];
-        // this.board[row][col] = marker
         this.board[index] = marker;
     }
 
@@ -60,20 +46,6 @@ export class Gameboard {
         //take ship.length and array of position coordinates and add to board
         const ship = new Ship(shipType)
         this.ships.push(ship);
-        // let x = startPosition[0];
-        // let y = startPosition[1];
-        // if (direction === 'vertical') {
-        //     for (let i = 0; i < ship.length; i++) {
-        //         this.changeBoard([x,y], ship);
-        //         x++;
-        //     }
-        // }
-        // else if (direction === 'horizontal') {
-        //     for (let i = 0; i < ship.length; i++) {
-        //         this.changeBoard([x,y], ship);
-        //         y++;
-        //     }
-        // }
         if (direction === 'vertical') {
             for (let i = 0; i < ship.length; i++) {
                 this.changeBoard(startPosition, ship);
@@ -89,13 +61,6 @@ export class Gameboard {
     }
 
     receiveAttack(player, target) {
-        // if (typeof this.board[coordinates[0]][coordinates[1]] === "object") {
-        //     this.board[coordinates[0]][coordinates[1]].hitShip()
-        //     console.log(this.board[coordinates[0]][coordinates[1]].hit)
-        // }
-        // else {
-        //     this.board[coordinates[0]][coordinates[1]] = 'X'
-        // }
         if (this.board[target] === 'MISS' || this.board[target] === 'HIT') {
             return false;
         }
@@ -105,18 +70,29 @@ export class Gameboard {
         if (typeof this.board[target] === "object") {
             this.board[target].hitShip()
             this.board[target] = 'HIT'
-            syncBoard(player);
+            console.log('HIT')
+            this.hit++
+            this.totalHits++;
+            player.syncBoard();
             return true;
         }
 
         else {
             this.board[target] = 'MISS'
-            syncBoard(player);
+            player.syncBoard();
+            console.log('MISS')
             return true;
         }
     }
 
     allSunk() {
+        //17 hit spaces
+        if (this.totalHits === this.ships.length) {
+            return true;
+        } 
+        else {
+            return false;
+        }
 
     }
 }
@@ -125,6 +101,69 @@ export class Player {
     constructor(name) {
         this.name = name;
         this.board = new Gameboard();
+        this.guesses = []
+    }
+
+    takeTurn(guess) {
+        this.board.receiveAttack(this, guess);
+        //console.log(validTurn)
+    }
+
+    autoTurn() {
+        console.log('autoturn')
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+          }
+        let validGuess = false;
+        let guess;
+        while (!validGuess) {
+            guess = getRandomInt(0, 99);
+            if (!this.guesses.includes(guess)) {
+                validGuess = true;
+            }
+        }
+        this.takeTurn(guess)
+        this.guesses.push(guess)
+        if (this.board.allSunk()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    syncBoard() {
+        if (this.name === "Human") {
+            let playerChildren = playerBoard.children;
+            for (let i = 0; i < 100; i++) {
+                if (typeof this.board.board[i] === "object") {
+                    playerChildren[i].classList.add("ship");
+                }
+                if (this.board.board[i] === 'MISS') {
+                    playerChildren[i].classList.add("missed")
+                }
+                if (this.board.board[i] === 'HIT') {
+                    playerChildren[i].classList.add("hit");
+                }
+            }
+        }
+        else if (this.name === "Computer") {
+            //let computerBoard = document.getElementById('computerBoard');
+            let computerChildren = computerBoard.children;
+            for (let i = 0; i < 100; i++) {
+                if (typeof this.board.board[i] === "object") {
+                    computerChildren[i].classList.add("ship");
+                }
+                if (this.board.board[i] === 'MISS') {
+                    computerChildren[i].classList.add("missed")
+                }
+                if (this.board.board[i] === 'HIT') {
+                    computerChildren[i].classList.add("hit");
+                }
+            }
+        }
     }
 }
 
@@ -153,32 +192,11 @@ function initializeDOMBoard(players) {
         });
         computerBoard.appendChild(div);
     }
-    
-    //sync player board with existing ships
-    //human board
-    // let playerChildren = playerBoard.children;
-    // console.log(human.board.board)
-    // for (let i = 0; i < 100; i++) {
-    //     if (typeof human.board.board[i] === "object") {
-    //         console.log(playerChildren[i])
-    //         playerChildren[i].classList.add("ship");
-    //     }
-    // }
-    // //computer board
-    // let computerChildren = computerBoard.children;
-    // console.log(computer.board.board)
-    // for (let i = 0; i < 100; i++) {
-    //     if (typeof computer.board.board[i] === "object") {
-    //         console.log(`ship at ${i}`)
-    //         computerChildren[i].classList.add("ship");
-    //     }
-    // }
-    //console.log(children.getElementById('[0,0]'));
-    //sync computer board with existing ships
 }
 
 export function syncBoard(player) {
     if (player.name === "Human") {
+        console.log(player.name)
         let playerChildren = playerBoard.children;
         for (let i = 0; i < 100; i++) {
             if (typeof player.board.board[i] === "object") {
@@ -193,12 +211,13 @@ export function syncBoard(player) {
         }
     }
     else if (player.name === "Computer") {
+        console.log(player.name)
         //let computerBoard = document.getElementById('computerBoard');
         let computerChildren = computerBoard.children;
         for (let i = 0; i < 100; i++) {
-            if (typeof player.board.board[i] === "object") {
-                computerChildren[i].classList.add("ship");
-            }
+            //if (typeof player.board.board[i] === "object") {
+            //    computerChildren[i].classList.add("ship");
+            //}
             if (player.board.board[i] === 'MISS') {
                 computerChildren[i].classList.add("missed")
             }
@@ -217,13 +236,23 @@ export function startGame(p1, p2) {
     playerOne.board.placeShip('Destroyer', 50, 'horizontal')
     playerOne.board.placeShip('Submarine', 29, 'vertical')
     playerOne.board.placeShip('Patrol Boat', 72, 'horizontal')
-    playerTwo.board.placeShip('Carrier', 2, 'horizontal')
-    playerTwo.board.placeShip('Battleship', 20, 'vertical')
-    playerTwo.board.placeShip('Destroyer', 55, 'horizontal')
+    playerTwo.board.placeShip('Carrier', 0, 'horizontal')
+    playerTwo.board.placeShip('Battleship', 15, 'vertical')
+    playerTwo.board.placeShip('Destroyer', 20, 'horizontal')
     playerTwo.board.placeShip('Submarine', 29, 'vertical')
     playerTwo.board.placeShip('Patrol Boat', 72, 'horizontal')
     initializeDOMBoard([playerOne, playerTwo]);
-    syncBoard(playerOne);
-    syncBoard(playerTwo);
+    playerOne.syncBoard();
+    playerTwo.syncBoard();
     return [playerOne, playerTwo];
+}
+
+export function playerTurn(player) {
+    //do nothing until click on valid cell, which will trigger
+
+    //check if all sunk,
+}
+
+export function computerTurn(player) {
+
 }
